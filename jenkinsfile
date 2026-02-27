@@ -1,1 +1,50 @@
+pipeline {
+    agent any
 
+    environment {
+        DEPLOY_PATH = "/var/www/html"
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/rajith8an80/Carwebsite-Static-FE-3.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo "Building Car Website..."
+                sh 'echo Build completed successfully'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo "Running basic validation..."
+                sh 'ls -l'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo "Deploying to Nginx server..."
+                sh '''
+                sudo rm -rf ${DEPLOY_PATH}/*
+                sudo cp -r * ${DEPLOY_PATH}/
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment Successful!'
+        }
+        failure {
+            echo 'Deployment Failed!'
+        }
+    }
+}
